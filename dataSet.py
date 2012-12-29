@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from data import Record
+import random
 
 _dataPath = 'data/u.data'
 
@@ -31,5 +32,17 @@ def _init():
 
 _init()
 
+def randomSplit():
+    train = []
+    test = []
+    for record in recordList:
+        if random.randint(0, 7)==0:
+            test.append(record)
+        else:
+            train.append(record)
+    return train, test
+
 if __name__ == '__main__':
-    print len(recordList)
+    train, test = randomSplit()
+    print len(train)
+    print len(test)
