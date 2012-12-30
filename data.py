@@ -27,3 +27,35 @@ class Record(object):
         rate = int(m.group(3))
         time = int(m.group(4))
         return Record(userId, itemId, rate, time)
+
+class _BaseRevertedTable(object):
+    _map = None
+
+    def __init__(self):
+        self._map = {}
+
+    def add(self, record):
+        key = self._key(record)
+        tList = self._map.get(key)
+        if tList is None:
+            tList = []
+            self._map[key] = tList 
+        tList.append(record)
+    
+    def _key(self, record):
+        """ abstract method """
+        pass
+
+    def recordCount(self):
+        count = 0
+        for userList in self._map.values():
+            count += len(userList)
+        return count
+
+class ItemUsers(_BaseRevertedTable):
+    def _key(self, record):
+        return record.itemId
+
+class UserItems(_BaseRevertedTable):
+    def _key(self, record):
+        return record.userId

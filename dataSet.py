@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from data import Record
+from data import Record, ItemUsers, UserItems
 import random
 
 _dataPath = 'data/u.data'
@@ -24,34 +24,22 @@ _init()
 
 def exportTables(records=recordList):
     """ export item-user table and user-item table """
-    itemUsers = {}
-    userItems = {}
+    itemUsers = ItemUsers()
+    userItems = UserItems()
     for record in records:
-        uList = itemUsers.get(record.itemId)
-        if uList is None:
-            uList = []
-            itemUsers[record.itemId] = uList
-        uList.append(record)
-        iList = userItems.get(record.userId)
-        if iList is None:
-            iList = []
-            userItems[record.userId] = iList
-        iList.append(record)
+        itemUsers.add(record)
+        userItems.add(record)
     return itemUsers, itemUsers
 
 def _testExportTables():
     itemUsers, userItems = exportTables(recordList)
-    count = 0
-    for records in itemUsers.values():
-        count += len(records)
-    if count != len(recordList):
-        print "Test Failed! len(recordList)=%d, but count itemUsers=%d" % (len(recordList), count)
+    if itemUsers.recordCount() != len(recordList):
+        print "Test Failed! len(recordList)=%d, but count itemUsers=%d" % (len(recordList), \
+            itemUsers.recordCount())
         return
-    count = 0
-    for records in userItems.values():
-        count += len(records)
-    if count != len(recordList):
-        print "Test Failed! len(recordList)=%d, but count userItems=%d" % (len(recordList), count)
+    if userItems.recordCount() != len(recordList):
+        print "Test Failed! len(recordList)=%d, but count userItems=%d" % (len(recordList), \
+            userItems.recordCount())
         return
 
 _SPLIT_COUNT = 8
