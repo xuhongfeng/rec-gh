@@ -28,6 +28,21 @@ class Record(object):
         time = int(m.group(4))
         return Record(userId, itemId, rate, time)
 
+    def __str__(self):
+        return self.serialize()
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__)\
+            and self.itemId==other.itemId\
+            and self.userId==other.userId\
+            and self.rate==other.rate\
+            and self.time==other.time
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 class _BaseRevertedTable(object):
     _map = None
 
@@ -51,10 +66,27 @@ class _BaseRevertedTable(object):
         for userList in self._map.values():
             count += len(userList)
         return count
+    
+    def _keys(self):
+        return self._map.keys()
+
+    def listRecordList(self):
+        """ return list of recordList """
+        return self._map.values()
+
+    def size(self) :
+        return len(self._map)
+
+    def get(self, key):
+        return self._map.get(key)
 
 class ItemUsers(_BaseRevertedTable):
     def _key(self, record):
         return record.itemId
+
+    def itemIds(self):
+        return self._keys()
+
 
 class UserItems(_BaseRevertedTable):
     def _key(self, record):
